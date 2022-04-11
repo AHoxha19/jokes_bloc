@@ -8,12 +8,18 @@ part 'joke_event.dart';
 part 'joke_state.dart';
 
 class JokeBloc extends Bloc<JokeEvent, JokeState> {
-  JokeBloc({required JokesRepository jokesRepository})
+  JokeBloc(
+      {required JokesRepository jokesRepository,
+      required bool mode,
+      int? position})
       : _jokesRepository = jokesRepository,
-        super(JokeState()) {
+        super(JokeState(
+            jokeMode: mode ? JokeMode.history_joke : JokeMode.new_joke,
+            position: position)) {
     on<FetchJoke>(_fetchJoke);
     on<FetchPreviousJoke>(_fetchPreviousJoke);
     on<FetchNextJoke>(_fetchNextJoke);
+    on<EditFavorite>(_editFavorite);
   }
 
   final JokesRepository _jokesRepository;
@@ -23,14 +29,19 @@ class JokeBloc extends Bloc<JokeEvent, JokeState> {
 
     try {
       if (state.jokeMode == JokeMode.new_joke) {
-        //We need to fetch a new Joke
+        //fetch a new joke from API
         final joke = await _jokesRepository.getJoke(true);
         emit(state.copyWith(
             status: JokeStatus.success,
             history: state.history..add(joke),
             joke: joke));
       } else {
-        //We need to load a Joke from history / localDB
+        //load all Jokes in history
+        final jokes = await _jokesRepository.getFavoriteJokes();
+        emit(state.copyWith(
+            status: JokeStatus.success,
+            history: jokes,
+            joke: jokes.elementAt(state.position)));
       }
     } catch (e) {
       print(e);
@@ -60,7 +71,11 @@ class JokeBloc extends Bloc<JokeEvent, JokeState> {
               joke: state.history[state.position + 1]));
         }
       } else {
-        //We need to load a Joke from history / localDB
+        //We need to load a Joke from history
+        emit(state.copyWith(
+            status: JokeStatus.success,
+            position: state.position + 1,
+            joke: state.history[state.position + 1]));
       }
     } catch (e) {
       print(e);
@@ -72,5 +87,17 @@ class JokeBloc extends Bloc<JokeEvent, JokeState> {
     if (state.isFirstJoke()) return;
     emit(state.copyWith(
         position: state.position - 1, joke: state.history[state.position - 1]));
+  }
+
+  void _editFavorite(EditFavorite event, Emitter<JokeState> emit) async {
+    final newJoke = state.joke.copyWith(favorite: !state.joke.favorite);
+    final newState = state.copyWith(
+        status: JokeStatus.success,
+        joke: newJoke,
+        history: state.history
+          ..removeAt(state.position)
+          ..add(newJoke));
+    await _jokesRepository.editJoke(newState.joke);
+    emit(newState);
   }
 }

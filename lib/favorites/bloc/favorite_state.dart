@@ -1,6 +1,6 @@
 part of 'favorite_bloc.dart';
 
-enum FavoriteStatus { initial, loading, success, failure }
+enum FavoriteStatus { initial, empty, loading, success, failure }
 
 //initial is for empty and success when we have data
 

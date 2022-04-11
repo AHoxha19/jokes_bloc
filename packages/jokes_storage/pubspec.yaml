@@ -1,5 +1,5 @@
-name: jokes_api
-description: A library to fetch jokes from API.
+name: jokes_storage
+description: A DB repository for storing favorite Jokes in local db.
 version: 0.0.1
 publish_to: none
 
@@ -8,13 +8,13 @@ environment:
   flutter: ">=1.17.0"
 
 dependencies:
-  http: ^0.13.4
+  equatable: ^2.0.3
   json_annotation: ^4.4.0
+  sqflite: ^2.0.2
 
 dev_dependencies:
   coverage: ^1.1.0
   build_runner: ^2.1.7
   json_serializable: ^6.1.4
   mocktail: ^0.2.0
-  test: ^1.20.1
-
+  test: ^1.16.4

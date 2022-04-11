@@ -22,6 +22,10 @@ class JokeState extends Equatable {
   final List<Joke> history;
   final JokeMode jokeMode;
 
+  bool isHistoryMode() => jokeMode == JokeMode.history_joke;
+  bool isLastJokeOfFavorites() =>
+      jokeMode == JokeMode.history_joke && position == history.length - 1;
+
   bool isFirstJoke() {
     return position == 0;
   }

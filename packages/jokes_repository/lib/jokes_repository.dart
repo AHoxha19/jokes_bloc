@@ -1,4 +1,4 @@
 library jokes_repository;
 
 export 'src/jokes_repository.dart';
-export 'src/models/models.dart';
+export 'package:jokes_storage/jokes_storage.dart';

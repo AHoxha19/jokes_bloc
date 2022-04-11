@@ -11,10 +11,14 @@ class FetchJoke extends JokeEvent {
   const FetchJoke();
 }
 
-class FetchNextJoke extends JokeEvent{
+class FetchNextJoke extends JokeEvent {
   const FetchNextJoke();
 }
 
-class FetchPreviousJoke extends JokeEvent{
+class FetchPreviousJoke extends JokeEvent {
   const FetchPreviousJoke();
+}
+
+class EditFavorite extends JokeEvent {
+  const EditFavorite();
 }

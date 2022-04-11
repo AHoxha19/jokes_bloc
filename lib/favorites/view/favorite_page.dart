@@ -4,6 +4,10 @@ import 'package:jokes_bloc/favorites/bloc/favorite_bloc.dart';
 import 'package:jokes_bloc/favorites/widgets/favorite_empty.dart';
 import 'package:jokes_bloc/favorites/widgets/favorite_loading.dart';
 import 'package:jokes_bloc/joke/bloc/joke_bloc.dart';
+import 'package:jokes_repository/jokes_repository.dart';
+
+const newJokeMode = false;
+const historyMode = true;
 
 class FavoritePage extends StatelessWidget {
   const FavoritePage({Key? key}) : super(key: key);
@@ -16,9 +20,11 @@ class FavoritePage extends StatelessWidget {
         actions: [
           IconButton(
               onPressed: () async {
-                //TODO: Pass Mode Joke to Joke Bloc
-                Navigator.pushNamed(context, '/joke');
-                //context.read<JokeBloc>().add(FetchNextJoke());
+                final rebuild = await Navigator.pushNamed(context, '/joke',
+                    arguments: [newJokeMode]);
+                if (rebuild != null) {
+                  context.read<FavoriteBloc>().add(GetAllFavorites());
+                }
               },
               icon: Icon(Icons.add))
         ],
@@ -28,9 +34,12 @@ class FavoritePage extends StatelessWidget {
           case FavoriteStatus.loading:
             return FavoriteLoading();
           case FavoriteStatus.initial:
+            context.read<FavoriteBloc>().add(GetAllFavorites());
+            return FavoriteEmpty();
+          case FavoriteStatus.empty:
             return FavoriteEmpty();
           case FavoriteStatus.success:
-            return FavoriteView();
+            return FavoriteView(jokes: state.jokes);
           case FavoriteStatus.failure:
             return FavoriteEmpty();
           default:
@@ -42,10 +51,27 @@ class FavoritePage extends StatelessWidget {
 }
 
 class FavoriteView extends StatelessWidget {
-  const FavoriteView({Key? key}) : super(key: key);
+  const FavoriteView({Key? key, required this.jokes}) : super(key: key);
+
+  final List<Joke> jokes;
 
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return ListView.builder(
+        itemCount: jokes.length,
+        itemBuilder: (context, index) {
+          return ListTile(
+            onTap: () async {
+              final res = await Navigator.pushNamed(context, '/joke',
+                  arguments: [historyMode, index]);
+              if (res != null) {
+                context.read<FavoriteBloc>().add(GetAllFavorites());
+              }
+            },
+            title: Text(jokes[index].joke),
+            subtitle: Text(jokes[index].category.toString()),
+            trailing: Icon(Icons.navigate_next),
+          );
+        });
   }
 }

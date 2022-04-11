@@ -1,6 +1,7 @@
 name: jokes_repository
 description: Repository to manage the jokes in Jokes App.
 version: 0.0.1
+publish_to: none
 
 environment:
   sdk: ">=2.16.0 <3.0.0"
@@ -11,6 +12,8 @@ dependencies:
   json_annotation: ^4.4.0
   jokes_api:
     path: ../jokes_api
+  jokes_storage:
+    path: ../jokes_storage
 
 dev_dependencies:
   coverage: ^1.1.0

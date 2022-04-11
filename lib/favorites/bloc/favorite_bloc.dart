@@ -23,7 +23,7 @@ class FavoriteBloc extends Bloc<FavoriteEvent, FavoriteState> {
     try {
       final jokes = await _jokesRepository.getFavoriteJokes();
       if (jokes.isEmpty) {
-        emit(state.copyWith(status: FavoriteStatus.initial, jokes: []));
+        emit(state.copyWith(status: FavoriteStatus.empty));
         return;
       }
       emit(state.copyWith(jokes: jokes, status: FavoriteStatus.success));

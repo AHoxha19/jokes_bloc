@@ -14,20 +14,18 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-        providers: [
-          BlocProvider(
-              create: (_) => FavoriteBloc(jokesRepository: jokesRepository)),
-          BlocProvider(
-              create: (_) => JokeBloc(jokesRepository: jokesRepository))
-        ],
-        child: MaterialApp(
-          title: 'Jokes',
-          initialRoute: '/',
-          routes: {
-            '/': (_) => FavoritePage(),
-            '/joke': (_) => JokePage(),
-          },
+    return RepositoryProvider.value(
+        value: jokesRepository,
+        child: BlocProvider(
+          create: (context) => FavoriteBloc(jokesRepository: jokesRepository),
+          child: MaterialApp(
+            title: 'Jokes',
+            initialRoute: '/',
+            routes: {
+              '/': (_) => FavoritePage(),
+              '/joke': (_) => JokePage(),
+            },
+          ),
         ));
   }
 }

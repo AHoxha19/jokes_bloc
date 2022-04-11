@@ -5,6 +5,8 @@ class JokeError extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Center(
+      child: Text("An error has occured..."),
+    );
   }
 }
